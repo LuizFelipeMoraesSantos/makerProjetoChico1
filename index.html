@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quiz Simulado - Teste Arduino</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+        }
+        .question {
+            margin: 20px 0;
+            font-size: 18px;
+        }
+        .button {
+            padding: 10px 20px;
+            margin: 5px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+        .status {
+            font-weight: bold;
+        }
+        .status.correct {
+            color: green;
+        }
+        .status.incorrect {
+            color: red;
+        }
+    </style>
+</head>
+<body>
+    <h1>Quiz Simulado - Teste Arduino</h1>
+
+    <div id="quiz-container">
+        <div class="question" id="question-1">
+            Pergunta 1: Qual é a cor do céu?<br>
+            <button class="button" onclick="sendAnswer('a')">a) Azul</button>
+            <button class="button" onclick="sendAnswer('b')">b) Verde</button>
+            <button class="button" onclick="sendAnswer('c')">c) Vermelho</button>
+            <button class="button" onclick="sendAnswer('d')">d) Amarelo</button>
+        </div>
+    </div>
+
+    <div id="feedback"></div>
+    <button class="button" onclick="resetQuiz()">Resetar Quiz</button>
+
+    <script>
+        // Simulação de respostas corretas para testar o quiz
+        const correctAnswers = {
+            "Pergunta 1": "a",  // Resposta correta para a pergunta 1
+        };
+
+        function sendAnswer(answer) {
+            fetch('http://localhost:5000/resposta', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ resposta: answer }),
+            })
+            .then(response => response.json())
+            .then(data => {
+                // Verifica a resposta enviada
+                if (data.resposta === correctAnswers["Pergunta 1"]) {
+                    document.getElementById("feedback").innerHTML = `<span class='status correct'>✔ Correto!</span>`;
+                } else {
+                    document.getElementById("feedback").innerHTML = `<span class='status incorrect'>✖ Errado!</span>`;
+                }
+            })
+            .catch((error) => {
+                console.error('Erro ao enviar a resposta:', error);
+            });
+        }
+
+        function resetQuiz() {
+            document.getElementById("feedback").innerHTML = "";
+            alert("Quiz Resetado!");
+        }
+    </script>
+</body>
+</html>
